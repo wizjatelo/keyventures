@@ -1,0 +1,27 @@
+{
+  "name": "linemart",
+  "version": "1.0.0",
+  "description": "LineMart - Cashier and Customer Dashboard Integration",
+  "scripts": {
+    "build": "cd linemart-frontend && npm ci && npm run build",
+    "start": "cd linemart-frontend && npm start",
+    "install-frontend": "cd linemart-frontend && npm install"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/linemart.git"
+  },
+  "keywords": [
+    "react",
+    "django",
+    "ecommerce",
+    "dashboard",
+    "postgresql"
+  ],
+  "author": "LineMart Team",
+  "license": "MIT"
+}
