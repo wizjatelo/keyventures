@@ -8,7 +8,6 @@ services:
   - type: web
     name: linemart-backend
     runtime: python3
-    rootDir: backend
     buildCommand: "./build.sh"
     startCommand: "gunicorn config.wsgi:application"
     envVars:
@@ -26,19 +25,3 @@ services:
     plan: free
     healthCheckPath: /admin/
     autoDeploy: false
-
-  - type: web
-    name: linemart-frontend
-    runtime: node
-    rootDir: linemart-frontend
-    buildCommand: npm ci && npm run build
-    staticPublishPath: ./build
-    pullRequestPreviewsEnabled: true
-    buildFilter:
-      paths:
-      - linemart-frontend/**
-    envVars:
-      - key: REACT_APP_API_URL
-        value: https://linemart-backend.onrender.com
-    region: oregon
-    plan: free

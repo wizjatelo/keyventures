@@ -100,6 +100,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 import os
 import dj_database_url
+# psycopg2-binary is installed for PostgreSQL support (see requirements.txt)
 
 # Default to SQLite for local development
 DATABASES = {
@@ -109,7 +110,7 @@ DATABASES = {
     }
 }
 
-# Use PostgreSQL in production (Render)
+# Use PostgreSQL in production (Render) - requires psycopg2-binary
 if 'DATABASE_URL' in os.environ:
     DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'))
     DATABASES['default']['CONN_MAX_AGE'] = 600
