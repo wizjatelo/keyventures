@@ -1,0 +1,42 @@
+databases:
+  - name: linemart-db
+    databaseName: linemart
+    user: linemart_user
+    region: oregon
+
+services:
+  - type: web
+    name: linemart-backend
+    runtime: python3
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: linemart-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    region: oregon
+    plan: free
+    healthCheckPath: /admin/
+    autoDeploy: false
+
+  - type: web
+    name: linemart-frontend
+    runtime: node
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./build
+    pullRequestPreviewsEnabled: true
+    buildFilter:
+      paths:
+      - linemart-frontend/**
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://linemart-backend.onrender.com
+    region: oregon
+    plan: free

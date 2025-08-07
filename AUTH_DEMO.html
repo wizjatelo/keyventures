@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LineMart Authentication Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #FF6B3515 0%, #FF8A5B10 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FF6B35, #FF8A5B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        .header p {
+            color: #7F8C8D;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .demo-card {
+            background: #FFFFFF;
+            border-radius: 1rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            padding: 2rem;
+            border: 1px solid #E8EAED;
+        }
+        
+        .demo-card h3 {
+            color: #2C3E50;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .demo-card p {
+            color: #7F8C8D;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-list li {
+            color: #2C3E50;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .feature-list li::before {
+            content: "✅";
+            font-size: 0.875rem;
+        }
+        
+        .demo-button {
+            background: #FF6B35;
+            color: #FFFFFF;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .demo-button:hover {
+            background: #E55A2B;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .features-section {
+            background: #FFFFFF;
+            border-radius: 1rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .feature-item {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            background: #F8F9FA;
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: #FF6B3515;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .tech-stack {
+            background: #2C3E50;
+            color: #FFFFFF;
+            border-radius: 1rem;
+            padding: 2.5rem;
+            text-align: center;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .tech-item {
+            background: #34495E;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            background: #27AE60;
+            color: #FFFFFF;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🛒 LineMart Authentication System</h1>
+            <p>
+                Modern, themed login and signup forms designed to match the LineMart brand identity. 
+                Built with React and featuring role-based authentication for customers, cashiers, and managers.
+            </p>
+            <div class="status-badge">✅ FULLY IMPLEMENTED</div>
+        </div>
+
+        <!-- Demo Cards -->
+        <div class="demo-grid">
+            <!-- Customer Login -->
+            <div class="demo-card">
+                <h3>👤 Customer Login</h3>
+                <p>Clean, user-friendly login form for customers with guest access option.</p>
+                <ul class="feature-list">
+                    <li>Email/Username authentication</li>
+                    <li>Password visibility toggle</li>
+                    <li>Remember me functionality</li>
+                    <li>Guest access option</li>
+                    <li>Forgot password link</li>
+                    <li>Signup redirect</li>
+                </ul>
+                <a href="#" class="demo-button">View Customer Login</a>
+            </div>
+
+            <!-- Customer Signup -->
+            <div class="demo-card">
+                <h3>📝 Customer Signup</h3>
+                <p>Two-step registration process with comprehensive form validation.</p>
+                <ul class="feature-list">
+                    <li>Two-step registration flow</li>
+                    <li>Personal information collection</li>
+                    <li>Account details setup</li>
+                    <li>Real-time validation</li>
+                    <li>Progress indicator</li>
+                    <li>Auto-login after signup</li>
+                </ul>
+                <a href="#" class="demo-button">View Customer Signup</a>
+            </div>
+
+            <!-- Cashier Login -->
+            <div class="demo-card">
+                <h3>💰 Cashier Login</h3>
+                <p>Secure cashier authentication with additional security key requirement.</p>
+                <ul class="feature-list">
+                    <li>Employee ID authentication</li>
+                    <li>Security key validation</li>
+                    <li>Role-based access control</li>
+                    <li>Activity logging</li>
+                    <li>Manager contact option</li>
+                    <li>Enhanced security notices</li>
+                </ul>
+                <a href="#" class="demo-button">View Cashier Login</a>
+            </div>
+
+            <!-- Manager Login -->
+            <div class="demo-card">
+                <h3>🛡️ Manager Login</h3>
+                <p>Administrative portal access with highest security level.</p>
+                <ul class="feature-list">
+                    <li>Manager-only authentication</li>
+                    <li>Administrative privileges</li>
+                    <li>System-wide access</li>
+                    <li>Activity monitoring</li>
+                    <li>Security warnings</li>
+                    <li>Staff portal navigation</li>
+                </ul>
+                <a href="#" class="demo-button">View Manager Login</a>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-section">
+            <h2 style="text-align: center; color: #2C3E50; margin-bottom: 1rem;">🎨 Design Features</h2>
+            <p style="text-align: center; color: #7F8C8D; margin-bottom: 2rem;">
+                All authentication forms follow LineMart's design system with consistent theming and user experience.
+            </p>
+            
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🎨</div>
+                    <h4 style="color: #2C3E50; margin-bottom: 0.5rem;">Consistent Theme</h4>
+                    <p style="color: #7F8C8D; font-size: 0.875rem;">
+                        Orange primary color (#FF6B35) with matching gradients and hover effects
+                    </p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">📱</div>
+                    <h4 style="color: #2C3E50; margin-bottom: 0.5rem;">Responsive Design</h4>
+                    <p style="color: #7F8C8D; font-size: 0.875rem;">
+                        Mobile-first design that works perfectly on all device sizes
+                    </p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">🔒</div>
+                    <h4 style="color: #2C3E50; margin-bottom: 0.5rem;">Security First</h4>
+                    <p style="color: #7F8C8D; font-size: 0.875rem;">
+                        Role-based authentication with proper validation and error handling
+                    </p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">⚡</div>
+                    <h4 style="color: #2C3E50; margin-bottom: 0.5rem;">Fast & Smooth</h4>
+                    <p style="color: #7F8C8D; font-size: 0.875rem;">
+                        Optimized performance with smooth animations and transitions
+                    </p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">✅</div>
+                    <h4 style="color: #2C3E50; margin-bottom: 0.5rem;">Form Validation</h4>
+                    <p style="color: #7F8C8D; font-size: 0.875rem;">
+                        Real-time validation with clear error messages and success feedback
+                    </p>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">🔄</div>
+                    <h4 style="color: #2C3E50; margin-bottom: 0.5rem;">State Management</h4>
+                    <p style="color: #7F8C8D; font-size: 0.875rem;">
+                        Proper loading states, error handling, and success notifications
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="tech-stack">
+            <h2 style="margin-bottom: 1rem;">🛠️ Technology Stack</h2>
+            <p style="color: #BDC3C7; margin-bottom: 2rem;">
+                Built with modern web technologies for optimal performance and maintainability.
+            </p>
+            
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <h4 style="color: #FF6B35; margin-bottom: 0.5rem;">Frontend</h4>
+                    <p style="color: #BDC3C7; font-size: 0.875rem;">
+                        React 19.1.0<br>
+                        React Router DOM<br>
+                        Lucide React Icons<br>
+                        Context API
+                    </p>
+                </div>
+                
+                <div class="tech-item">
+                    <h4 style="color: #FF6B35; margin-bottom: 0.5rem;">Backend</h4>
+                    <p style="color: #BDC3C7; font-size: 0.875rem;">
+                        Django REST Framework<br>
+                        Token Authentication<br>
+                        Role-based Permissions<br>
+                        SQLite Database
+                    </p>
+                </div>
+                
+                <div class="tech-item">
+                    <h4 style="color: #FF6B35; margin-bottom: 0.5rem;">Security</h4>
+                    <p style="color: #BDC3C7; font-size: 0.875rem;">
+                        JWT Tokens<br>
+                        CORS Protection<br>
+                        Input Validation<br>
+                        Role Verification
+                    </p>
+                </div>
+                
+                <div class="tech-item">
+                    <h4 style="color: #FF6B35; margin-bottom: 0.5rem;">Features</h4>
+                    <p style="color: #BDC3C7; font-size: 0.875rem;">
+                        Protected Routes<br>
+                        Auto-redirect<br>
+                        Session Management<br>
+                        Error Boundaries
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Implementation Status -->
+        <div style="text-align: center; margin-top: 3rem; padding: 2rem; background: #27AE6010; border-radius: 1rem; border: 1px solid #27AE6030;">
+            <h2 style="color: #27AE60; margin-bottom: 1rem;">🎉 Implementation Complete!</h2>
+            <p style="color: #2C3E50; font-size: 1.1rem; margin-bottom: 1.5rem;">
+                All authentication forms have been successfully implemented with LineMart theming.
+            </p>
+            <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                <span style="background: #27AE60; color: white; padding: 0.5rem 1rem; border-radius: 2rem; font-size: 0.875rem;">✅ Customer Login & Signup</span>
+                <span style="background: #27AE60; color: white; padding: 0.5rem 1rem; border-radius: 2rem; font-size: 0.875rem;">✅ Cashier Login</span>
+                <span style="background: #27AE60; color: white; padding: 0.5rem 1rem; border-radius: 2rem; font-size: 0.875rem;">✅ Manager Login</span>
+                <span style="background: #27AE60; color: white; padding: 0.5rem 1rem; border-radius: 2rem; font-size: 0.875rem;">✅ Authentication Context</span>
+                <span style="background: #27AE60; color: white; padding: 0.5rem 1rem; border-radius: 2rem; font-size: 0.875rem;">✅ Protected Routes</span>
+                <span style="background: #27AE60; color: white; padding: 0.5rem 1rem; border-radius: 2rem; font-size: 0.875rem;">✅ Responsive Design</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

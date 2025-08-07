@@ -1,0 +1,2 @@
+DATABASE_URL=postgresql://postgres:wizjatelo@localhost:5432/yourdbname
+SECRET_KEY=3348

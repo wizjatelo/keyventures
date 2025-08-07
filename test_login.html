@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LineMart Authentication Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .customer { background-color: #4CAF50; color: white; }
+        .cashier { background-color: #FF9800; color: white; }
+        .manager { background-color: #2196F3; color: white; }
+    </style>
+</head>
+<body>
+    <h1>LineMart Authentication Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Accounts</h2>
+        <p><strong>Customer:</strong> customer_test / TestPass123!</p>
+        <p><strong>Cashier:</strong> cashier_test / TestPass123! / Key: oTtc-1HaKGn9APWtinnFTQ</p>
+        <p><strong>Manager:</strong> manager_test / TestPass123!</p>
+    </div>
+
+    <div class="test-section">
+        <h2>Quick Access Links</h2>
+        <button class="customer" onclick="window.open('http://localhost:3000/customer/login', '_blank')">
+            Customer Login
+        </button>
+        <button class="cashier" onclick="window.open('http://localhost:3000/cashier/login', '_blank')">
+            Cashier Login
+        </button>
+        <button class="manager" onclick="window.open('http://localhost:3000/manager/login', '_blank')">
+            Manager Login
+        </button>
+    </div>
+
+    <div class="test-section">
+        <h2>API Test</h2>
+        <button onclick="testCustomerLogin()">Test Customer API</button>
+        <button onclick="testCashierLogin()">Test Cashier API</button>
+        <button onclick="testManagerLogin()">Test Manager API</button>
+        <div id="api-results"></div>
+    </div>
+
+    <script>
+        async function testCustomerLogin() {
+            const results = document.getElementById('api-results');
+            results.innerHTML = 'Testing customer login...';
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/member/auth/customer/login/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: 'customer_test',
+                        password: 'TestPass123!'
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    results.innerHTML = `<div class="success">✅ Customer API: SUCCESS<br>User: ${data.user.username}<br>Role: ${data.user.role}</div>`;
+                } else {
+                    results.innerHTML = `<div class="error">❌ Customer API: FAILED<br>${data.error || 'Unknown error'}</div>`;
+                }
+            } catch (error) {
+                results.innerHTML = `<div class="error">❌ Customer API: ERROR<br>${error.message}</div>`;
+            }
+        }
+
+        async function testCashierLogin() {
+            const results = document.getElementById('api-results');
+            results.innerHTML = 'Testing cashier login...';
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/member/auth/cashier/login/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: 'cashier_test',
+                        password: 'TestPass123!',
+                        cashier_key: 'oTtc-1HaKGn9APWtinnFTQ'
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    results.innerHTML = `<div class="success">✅ Cashier API: SUCCESS<br>User: ${data.user.username}<br>Role: ${data.user.role}</div>`;
+                } else {
+                    results.innerHTML = `<div class="error">❌ Cashier API: FAILED<br>${data.error || 'Unknown error'}</div>`;
+                }
+            } catch (error) {
+                results.innerHTML = `<div class="error">❌ Cashier API: ERROR<br>${error.message}</div>`;
+            }
+        }
+
+        async function testManagerLogin() {
+            const results = document.getElementById('api-results');
+            results.innerHTML = 'Testing manager login...';
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/member/auth/manager/login/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: 'manager_test',
+                        password: 'TestPass123!'
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    results.innerHTML = `<div class="success">✅ Manager API: SUCCESS<br>User: ${data.user.username}<br>Role: ${data.user.role}</div>`;
+                } else {
+                    results.innerHTML = `<div class="error">❌ Manager API: FAILED<br>${data.error || 'Unknown error'}</div>`;
+                }
+            } catch (error) {
+                results.innerHTML = `<div class="error">❌ Manager API: ERROR<br>${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

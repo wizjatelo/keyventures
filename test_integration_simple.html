@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LineMart Integration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        
+        button {
+            background-color: #FF6B35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #E55A2B; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .data-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #FF6B35;
+            margin: 10px 0;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .metric:last-child { border-bottom: none; }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #FF6B35;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 LineMart Real-time Integration Test</h1>
+        <p>This page tests the real-time data flow between Cashier, Manager, and Customer dashboards.</p>
+        
+        <div class="grid">
+            <div>
+                <h3>🔧 Backend Health</h3>
+                <button onclick="testBackendHealth()">Test Backend Connection</button>
+                <div id="backend-status"></div>
+            </div>
+            
+            <div>
+                <h3>📊 Manager Dashboard Data</h3>
+                <button onclick="testManagerDashboard()">Load Manager Data</button>
+                <div id="manager-status"></div>
+            </div>
+            
+            <div>
+                <h3>🛒 Cashier Dashboard Data</h3>
+                <button onclick="testCashierDashboard()">Load Cashier Data</button>
+                <div id="cashier-status"></div>
+            </div>
+            
+            <div>
+                <h3>👥 Customer Dashboard Data</h3>
+                <button onclick="testCustomerDashboard()">Load Customer Data</button>
+                <div id="customer-status"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>🔄 Real-time Data Flow Test</h2>
+        <p>This section tests the real-time synchronization between dashboards.</p>
+        
+        <div class="grid">
+            <div>
+                <h3>📦 Product Data</h3>
+                <button onclick="testProductSync()">Test Product Sync</button>
+                <div id="product-sync-status"></div>
+                <div id="product-data" class="data-display" style="display: none;"></div>
+            </div>
+            
+            <div>
+                <h3>📂 Category Data</h3>
+                <button onclick="testCategorySync()">Test Category Sync</button>
+                <div id="category-sync-status"></div>
+                <div id="category-data" class="data-display" style="display: none;"></div>
+            </div>
+            
+            <div>
+                <h3>📊 Dashboard Metrics</h3>
+                <button onclick="testMetricsSync()">Test Metrics Sync</button>
+                <div id="metrics-sync-status"></div>
+                <div id="metrics-data" class="data-display" style="display: none;"></div>
+            </div>
+            
+            <div>
+                <h3>⚠️ Inventory Alerts</h3>
+                <button onclick="testInventoryAlerts()">Test Inventory Alerts</button>
+                <div id="inventory-status"></div>
+                <div id="inventory-data" class="data-display" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>🎯 Integration Summary</h2>
+        <div id="summary-status"></div>
+        <button onclick="runFullTest()">🚀 Run Complete Integration Test</button>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+        
+        function showStatus(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        function showLoading(elementId, message = 'Loading...') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status info"><span class="loading"></span> ${message}</div>`;
+        }
+        
+        async function testBackendHealth() {
+            showLoading('backend-status', 'Testing backend connection...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/cashier/categories/`);
+                if (response.ok) {
+                    const data = await response.json();
+                    showStatus('backend-status', `✅ Backend is healthy! Found ${data.length} categories.`, 'success');
+                    return true;
+                } else {
+                    showStatus('backend-status', `❌ Backend returned status ${response.status}`, 'error');
+                    return false;
+                }
+            } catch (error) {
+                showStatus('backend-status', `❌ Backend connection failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        async function testManagerDashboard() {
+            showLoading('manager-status', 'Testing manager dashboard endpoints...');
+            
+            try {
+                // Test multiple endpoints
+                const tests = [
+                    { name: 'Products', url: `${API_BASE}/cashier/products/` },
+                    { name: 'Categories', url: `${API_BASE}/cashier/categories/` },
+                    { name: 'Subcategories', url: `${API_BASE}/cashier/subcategories/` }
+                ];
+                
+                const results = await Promise.all(
+                    tests.map(async test => {
+                        try {
+                            const response = await fetch(test.url);
+                            const data = await response.json();
+                            return { name: test.name, success: true, count: data.length };
+                        } catch (error) {
+                            return { name: test.name, success: false, error: error.message };
+                        }
+                    })
+                );
+                
+                const successCount = results.filter(r => r.success).length;
+                const summary = results.map(r => 
+                    r.success ? `${r.name}: ${r.count} items` : `${r.name}: Failed`
+                ).join('<br>');
+                
+                if (successCount === tests.length) {
+                    showStatus('manager-status', `✅ Manager Dashboard Ready!<br>${summary}`, 'success');
+                } else {
+                    showStatus('manager-status', `⚠️ Partial Success (${successCount}/${tests.length})<br>${summary}`, 'warning');
+                }
+                
+                return successCount === tests.length;
+            } catch (error) {
+                showStatus('manager-status', `❌ Manager dashboard test failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        async function testCashierDashboard() {
+            showLoading('cashier-status', 'Testing cashier dashboard endpoints...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/cashier/products/`);
+                if (response.ok) {
+                    const products = await response.json();
+                    const lowStock = products.filter(p => p.stock <= 10);
+                    
+                    showStatus('cashier-status', 
+                        `✅ Cashier Dashboard Ready!<br>
+                        Products: ${products.length}<br>
+                        Low Stock Items: ${lowStock.length}`, 'success');
+                    return true;
+                } else {
+                    showStatus('cashier-status', `❌ Cashier API returned status ${response.status}`, 'error');
+                    return false;
+                }
+            } catch (error) {
+                showStatus('cashier-status', `❌ Cashier dashboard test failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        async function testCustomerDashboard() {
+            showLoading('customer-status', 'Testing customer dashboard endpoints...');
+            
+            try {
+                const [productsRes, categoriesRes] = await Promise.all([
+                    fetch(`${API_BASE}/cashier/products/`),
+                    fetch(`${API_BASE}/cashier/categories/`)
+                ]);
+                
+                if (productsRes.ok && categoriesRes.ok) {
+                    const products = await productsRes.json();
+                    const categories = await categoriesRes.json();
+                    
+                    showStatus('customer-status', 
+                        `✅ Customer Dashboard Ready!<br>
+                        Products: ${products.length}<br>
+                        Categories: ${categories.length}`, 'success');
+                    return true;
+                } else {
+                    showStatus('customer-status', `❌ Customer API endpoints failed`, 'error');
+                    return false;
+                }
+            } catch (error) {
+                showStatus('customer-status', `❌ Customer dashboard test failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        async function testProductSync() {
+            showLoading('product-sync-status', 'Testing product synchronization...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/cashier/products/`);
+                const products = await response.json();
+                
+                // Display product data
+                const productDisplay = document.getElementById('product-data');
+                productDisplay.style.display = 'block';
+                productDisplay.innerHTML = `
+                    <h4>📦 Product Inventory (${products.length} items)</h4>
+                    ${products.slice(0, 5).map(product => `
+                        <div class="metric">
+                            <span>${product.name}</span>
+                            <span>Stock: ${product.stock} | Price: $${product.price}</span>
+                        </div>
+                    `).join('')}
+                    ${products.length > 5 ? '<div class="metric"><span>...</span><span>and more</span></div>' : ''}
+                `;
+                
+                showStatus('product-sync-status', `✅ Product sync working! ${products.length} products loaded.`, 'success');
+                return true;
+            } catch (error) {
+                showStatus('product-sync-status', `❌ Product sync failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        async function testCategorySync() {
+            showLoading('category-sync-status', 'Testing category synchronization...');
+            
+            try {
+                const [categoriesRes, subcategoriesRes] = await Promise.all([
+                    fetch(`${API_BASE}/cashier/categories/`),
+                    fetch(`${API_BASE}/cashier/subcategories/`)
+                ]);
+                
+                const categories = await categoriesRes.json();
+                const subcategories = await subcategoriesRes.json();
+                
+                // Display category data
+                const categoryDisplay = document.getElementById('category-data');
+                categoryDisplay.style.display = 'block';
+                categoryDisplay.innerHTML = `
+                    <h4>📂 Category Structure</h4>
+                    <div class="metric">
+                        <span>Categories</span>
+                        <span>${categories.length}</span>
+                    </div>
+                    <div class="metric">
+                        <span>Subcategories</span>
+                        <span>${subcategories.length}</span>
+                    </div>
+                    <h5>Categories:</h5>
+                    ${categories.slice(0, 5).map(cat => `
+                        <div class="metric">
+                            <span>${cat.name}</span>
+                            <span>ID: ${cat.id}</span>
+                        </div>
+                    `).join('')}
+                `;
+                
+                showStatus('category-sync-status', `✅ Category sync working! ${categories.length} categories, ${subcategories.length} subcategories.`, 'success');
+                return true;
+            } catch (error) {
+                showStatus('category-sync-status', `❌ Category sync failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        async function testMetricsSync() {
+            showLoading('metrics-sync-status', 'Testing dashboard metrics...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/cashier/products/`);
+                const products = await response.json();
+                
+                // Calculate metrics
+                const totalProducts = products.length;
+                const totalValue = products.reduce((sum, p) => sum + (parseFloat(p.price) * p.stock), 0);
+                const avgPrice = totalValue / Math.max(totalProducts, 1);
+                const lowStockCount = products.filter(p => p.stock <= 10).length;
+                
+                // Display metrics
+                const metricsDisplay = document.getElementById('metrics-data');
+                metricsDisplay.style.display = 'block';
+                metricsDisplay.innerHTML = `
+                    <h4>📊 Real-time Metrics</h4>
+                    <div class="metric">
+                        <span>Total Products</span>
+                        <span>${totalProducts}</span>
+                    </div>
+                    <div class="metric">
+                        <span>Total Inventory Value</span>
+                        <span>$${totalValue.toFixed(2)}</span>
+                    </div>
+                    <div class="metric">
+                        <span>Average Product Value</span>
+                        <span>$${avgPrice.toFixed(2)}</span>
+                    </div>
+                    <div class="metric">
+                        <span>Low Stock Items</span>
+                        <span style="color: ${lowStockCount > 0 ? '#dc3545' : '#28a745'}">${lowStockCount}</span>
+                    </div>
+                `;
+                
+                showStatus('metrics-sync-status', `✅ Metrics calculated successfully! Total value: $${totalValue.toFixed(2)}`, 'success');
+                return true;
+            } catch (error) {
+                showStatus('metrics-sync-status', `❌ Metrics calculation failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        async function testInventoryAlerts() {
+            showLoading('inventory-status', 'Testing inventory alert system...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/cashier/products/`);
+                const products = await response.json();
+                
+                const lowStockProducts = products.filter(p => p.stock <= 10);
+                const criticalStockProducts = products.filter(p => p.stock <= 3);
+                
+                // Display inventory alerts
+                const inventoryDisplay = document.getElementById('inventory-data');
+                inventoryDisplay.style.display = 'block';
+                inventoryDisplay.innerHTML = `
+                    <h4>⚠️ Inventory Alerts</h4>
+                    <div class="metric">
+                        <span>Critical Stock (≤3)</span>
+                        <span style="color: #dc3545">${criticalStockProducts.length}</span>
+                    </div>
+                    <div class="metric">
+                        <span>Low Stock (≤10)</span>
+                        <span style="color: #ffc107">${lowStockProducts.length}</span>
+                    </div>
+                    ${lowStockProducts.length > 0 ? `
+                        <h5>Alert Details:</h5>
+                        ${lowStockProducts.slice(0, 3).map(product => `
+                            <div class="metric">
+                                <span>${product.name}</span>
+                                <span style="color: ${product.stock <= 3 ? '#dc3545' : '#ffc107'}">${product.stock} units</span>
+                            </div>
+                        `).join('')}
+                    ` : '<p style="color: #28a745;">✅ All products have adequate stock!</p>'}
+                `;
+                
+                const alertLevel = criticalStockProducts.length > 0 ? 'error' : 
+                                 lowStockProducts.length > 0 ? 'warning' : 'success';
+                const message = criticalStockProducts.length > 0 ? 
+                    `🚨 ${criticalStockProducts.length} critical, ${lowStockProducts.length} low stock items` :
+                    lowStockProducts.length > 0 ? 
+                    `⚠️ ${lowStockProducts.length} low stock items` :
+                    '✅ All inventory levels are healthy!';
+                
+                showStatus('inventory-status', message, alertLevel);
+                return true;
+            } catch (error) {
+                showStatus('inventory-status', `❌ Inventory alerts failed: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        async function runFullTest() {
+            showLoading('summary-status', 'Running complete integration test...');
+            
+            const tests = [
+                { name: 'Backend Health', test: testBackendHealth },
+                { name: 'Manager Dashboard', test: testManagerDashboard },
+                { name: 'Cashier Dashboard', test: testCashierDashboard },
+                { name: 'Customer Dashboard', test: testCustomerDashboard },
+                { name: 'Product Sync', test: testProductSync },
+                { name: 'Category Sync', test: testCategorySync },
+                { name: 'Metrics Sync', test: testMetricsSync },
+                { name: 'Inventory Alerts', test: testInventoryAlerts }
+            ];
+            
+            const results = [];
+            for (const test of tests) {
+                try {
+                    const result = await test.test();
+                    results.push({ name: test.name, success: result });
+                } catch (error) {
+                    results.push({ name: test.name, success: false, error: error.message });
+                }
+            }
+            
+            const successCount = results.filter(r => r.success).length;
+            const totalTests = results.length;
+            
+            const summaryHtml = `
+                <h3>🎯 Integration Test Results</h3>
+                <div class="metric">
+                    <span><strong>Overall Status</strong></span>
+                    <span style="color: ${successCount === totalTests ? '#28a745' : successCount > totalTests/2 ? '#ffc107' : '#dc3545'}">
+                        ${successCount}/${totalTests} tests passed
+                    </span>
+                </div>
+                <br>
+                ${results.map(result => `
+                    <div class="metric">
+                        <span>${result.success ? '✅' : '❌'} ${result.name}</span>
+                        <span>${result.success ? 'PASS' : 'FAIL'}</span>
+                    </div>
+                `).join('')}
+                <br>
+                <div class="status ${successCount === totalTests ? 'success' : successCount > totalTests/2 ? 'warning' : 'error'}">
+                    ${successCount === totalTests ? 
+                        '🎉 All tests passed! Your LineMart real-time integration is working perfectly!' :
+                        successCount > totalTests/2 ?
+                        '⚠️ Most tests passed, but some issues need attention.' :
+                        '❌ Multiple tests failed. Please check your backend and API configuration.'
+                    }
+                </div>
+            `;
+            
+            document.getElementById('summary-status').innerHTML = summaryHtml;
+        }
+        
+        // Auto-run backend health check on page load
+        window.addEventListener('load', () => {
+            testBackendHealth();
+        });
+    </script>
+</body>
+</html>

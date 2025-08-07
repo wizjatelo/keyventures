@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Cashier Login</title>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, #FF6B3515 0%, #FF8A5B10 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 1rem;
+        }
+        
+        .container {
+            background: #FFFFFF;
+            border-radius: 1rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        h1 {
+            color: #FF6B35;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2C3E50;
+            font-weight: 600;
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #E8EAED;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #FF6B35;
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
+        }
+        
+        button {
+            width: 100%;
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 0.875rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        
+        button:hover {
+            background: #E55A2B;
+        }
+        
+        button:disabled {
+            background: #7F8C8D;
+            cursor: not-allowed;
+        }
+        
+        .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+        }
+        
+        .success {
+            background: #27AE6010;
+            border: 1px solid #27AE6030;
+            color: #27AE60;
+        }
+        
+        .error {
+            background: #E74C3C10;
+            border: 1px solid #E74C3C30;
+            color: #E74C3C;
+        }
+        
+        .info {
+            background: #3498DB10;
+            border: 1px solid #3498DB30;
+            color: #3498DB;
+        }
+        
+        .credentials {
+            background: #F39C1210;
+            border: 1px solid #F39C1230;
+            color: #F39C12;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+        
+        .credentials h3 {
+            margin: 0 0 0.5rem;
+            color: #F39C12;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Test Cashier Login</h1>
+        
+        <div class="credentials">
+            <h3>Test Credentials:</h3>
+            <strong>Username:</strong> testcashier<br>
+            <strong>Password:</strong> testpass123<br>
+            <strong>Cashier Key:</strong> CASHIER123
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" value="testcashier" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" value="testpass123" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="cashierKey">Cashier Key:</label>
+                <input type="password" id="cashierKey" value="CASHIER123" required>
+            </div>
+            
+            <button type="submit" id="loginBtn">Test Login</button>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000/api';
+        
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const loginBtn = document.getElementById('loginBtn');
+            const resultDiv = document.getElementById('result');
+            
+            // Get form data
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const cashierKey = document.getElementById('cashierKey').value;
+            
+            // Disable button and show loading
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Testing...';
+            resultDiv.innerHTML = '<div class="result info">Testing cashier login...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/cashier/login/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password,
+                        cashier_key: cashierKey
+                    }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            ✅ LOGIN SUCCESSFUL!
+                            
+                            Response Data:
+                            ${JSON.stringify(data, null, 2)}
+                            
+                            Token: ${data.token}
+                            User ID: ${data.user_id}
+                            Username: ${data.username}
+                            Role: ${data.role}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            ❌ LOGIN FAILED!
+                            
+                            Status: ${response.status}
+                            Error: ${data.error || 'Unknown error'}
+                            
+                            Full Response:
+                            ${JSON.stringify(data, null, 2)}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ❌ NETWORK ERROR!
+                        
+                        Error: ${error.message}
+                        
+                        This usually means:
+                        1. Django server is not running
+                        2. CORS is not configured properly
+                        3. API endpoint is incorrect
+                        
+                        Make sure Django server is running on http://localhost:8000
+                    </div>
+                `;
+            } finally {
+                // Re-enable button
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Test Login';
+            }
+        });
+        
+        // Test server connectivity on page load
+        window.addEventListener('load', async () => {
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/cashier/login/`, {
+                    method: 'OPTIONS'
+                });
+                
+                resultDiv.innerHTML = `
+                    <div class="result info">
+                        🌐 Server Status: Connected
+                        Django API is accessible at ${API_BASE_URL}
+                        
+                        Ready to test cashier login!
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        🌐 Server Status: Disconnected
+                        
+                        Cannot connect to Django API at ${API_BASE_URL}
+                        
+                        Please make sure:
+                        1. Django server is running: python manage.py runserver
+                        2. Server is accessible at http://localhost:8000
+                        3. CORS is properly configured
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
