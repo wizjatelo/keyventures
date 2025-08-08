@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "LineMart - Cashier and Customer Dashboard Integration",
   "scripts": {
-    "build": "cd linemart-frontend && npm install && npm run build",
-    "start": "cd linemart-frontend && npm install && npm start",
-    "install-frontend": "cd linemart-frontend && npm install",
-    "heroku-postbuild": "cd linemart-frontend && npm install && npm run build"
+    "build": "npm install --prefix linemart-frontend && npm run build --prefix linemart-frontend",
+    "start": "npm install --prefix linemart-frontend && npm start --prefix linemart-frontend",
+    "install-frontend": "npm install --prefix linemart-frontend",
+    "heroku-postbuild": "npm install --prefix linemart-frontend && npm run build --prefix linemart-frontend"
   },
   "engines": {
     "node": ">=16.0.0",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/linemart.git"
+    "url": "https://github.com/wizjatelo/keyventures.git"
   },
   "keywords": [
     "react",

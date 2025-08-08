@@ -8,7 +8,7 @@ services:
   - type: web
     name: linemart-backend
     runtime: python3
-    buildCommand: "cd backend && pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    buildCommand: "chmod +x build.sh && ./build.sh backend"
     startCommand: "cd backend && gunicorn config.wsgi:application"
     envVars:
       - key: DATABASE_URL
@@ -22,3 +22,14 @@ services:
     region: oregon
     plan: free
     healthCheckPath: /admin/
+
+  - type: static
+    name: linemart-frontend
+    buildCommand: "chmod +x build.sh && ./build.sh frontend"
+    staticPublishPath: linemart-frontend/build
+    pullRequestPreviewsEnabled: true
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://linemart-backend.onrender.com
+    region: oregon
+    plan: free
