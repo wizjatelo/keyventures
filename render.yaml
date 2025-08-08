@@ -28,7 +28,7 @@ services:
 
   - type: static
     name: linemart-frontend
-    buildCommand: "cd linemart-frontend && npm ci && npm run build"
+    buildCommand: "cd linemart-frontend && npm install && npm run build"
     staticPublishPath: linemart-frontend/build
     pullRequestPreviewsEnabled: true
     buildFilter:

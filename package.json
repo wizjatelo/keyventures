@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "LineMart - Cashier and Customer Dashboard Integration",
   "scripts": {
-    "build": "cd linemart-frontend && npm ci && npm run build",
-    "start": "cd linemart-frontend && npm start",
-    "install-frontend": "cd linemart-frontend && npm install"
+    "build": "cd linemart-frontend && npm install && npm run build",
+    "start": "cd linemart-frontend && npm install && npm start",
+    "install-frontend": "cd linemart-frontend && npm install",
+    "heroku-postbuild": "cd linemart-frontend && npm install && npm run build"
   },
   "engines": {
     "node": ">=16.0.0",

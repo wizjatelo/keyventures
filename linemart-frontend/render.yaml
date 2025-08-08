@@ -1,8 +1,7 @@
 services:
-  - type: web
+  - type: static
     name: linemart-frontend
-    runtime: node
-    buildCommand: npm ci && npm run build
+    buildCommand: "npm install && npm run build"
     staticPublishPath: ./build
     pullRequestPreviewsEnabled: true
     envVars:
