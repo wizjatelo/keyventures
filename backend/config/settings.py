@@ -14,7 +14,11 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '0.0.0.0',
-    '.onrender.com',  # Render.com domains
+    '.onrender.com', 
+     "https://linemart-frontend.onrender.com", 
+
+   
+# Render.com domains
 ]
 
 # Add custom domain if provided
